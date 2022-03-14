@@ -19,7 +19,20 @@ export class HttpServer {
     private setupServices() {
         //配置根目录
         this.app.post('/post', (req, res) => {
-            res.send(`${req.body} POST request to the homepage`);
+            req.setEncoding('utf8');
+            //接收数据
+            var data = '';
+            req.on('data', (chunk: any) => {
+                data += chunk;
+                console.log('data:', chunk);
+            });
+            req.on('end', () => {
+                console.log('end');
+                res.send(`${data} POST request to the homepage`);
+            });
+            req.on('close', () => {
+                console.log('close');
+            });
         })
     }
 
@@ -28,7 +41,7 @@ export class HttpServer {
      */
     public start() {
         this.app.listen(this.port, () => {
-            console.log(`App listening on the http://localhost:${this.port}`)
+            console.log(`App listening on the http://127.0.0.1:${this.port}`)
         })
     }
 }
